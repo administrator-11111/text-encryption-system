@@ -20,7 +20,12 @@ int main(){
     graba_mensaje(codificado);
     return 0;
 }
-
+void inicializar_arreglo(char *arreglo, int tam) {
+    int i;
+    for (i = 0; i < tam; i++) {
+        arreglo[i] = '\0';
+    }
+}
 void lee_original(char *original, int *clave) {
     FILE *archivo;
     char datos[100];
@@ -28,13 +33,13 @@ void lee_original(char *original, int *clave) {
     archivo = fopen("original.txt", "r");
     j = 0;
     *clave = 0;
+    inicializar_arreglo(datos, 100);
+    inicializar_arreglo(original, 100);
     tam_original = strlen(original);
-    for (i = 0; i < tam_original; i++) {
-        original[i] = '\0'; 
-    }
+    
     i = 0;
     if (archivo != NULL) {
-        fgets(datos, tam_original, archivo);
+        fgets(datos, sizeof(datos), archivo);
         while (datos[i] >= '0' && datos[i] <= '9') {
             *clave = (*clave * 10) + (datos[i] - '0');
             i++;
@@ -50,18 +55,14 @@ void lee_original(char *original, int *clave) {
 }
 
 void inicializa_alfabeto(char *alfabeto) {
-    char pre_alfabeto[47] = {
+    char pre_alfabeto[48] = {
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
         'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
         'Y', 'Z', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-        '9', '!', ',', '.', ':', ';', '?', '-', '+', '*', '/'}; 
+        '9', '!', ',', '.', ':', ';', '?', '-', '+', '*', '/', '\0'}; 
     int i;
-    for (i = 0; i < strlen(pre_alfabeto); i++) {
+    for (i = 0; i < sizeof(pre_alfabeto); i++) {
         alfabeto[i] = pre_alfabeto[i]; 
-    }
-    while (i < strlen(alfabeto)) {
-        alfabeto[i] = '\0';
-        i++;
     }
 }
 
@@ -74,15 +75,15 @@ int posicion_caracter(int posicion, int clave, int tam) {
     return nueva_posicion;
 }
 void primera_etapa(char *original, char *codificado, int clave) {
-    char alfabeto[47];
-    int tam_alfabeto, i, j;
+    char alfabeto[48];
+    int tamano_alfabeto, i, j;
     inicializa_alfabeto(alfabeto);
-    tam_alfabeto = strlen(alfabeto);
+    tamano_alfabeto = strlen(alfabeto);
     i = 0;
     while (original[i] != '\0') {
-        for (j = 0; j < tam_alfabeto; j++) {
+        for (j = 0; j < tamano_alfabeto; j++) {
             if (original[i] == alfabeto[j]) {
-                int pos = posicion_caracter(j, clave, tam_alfabeto);
+                int pos = posicion_caracter(j, clave, tamano_alfabeto);
                 codificado[i] = alfabeto[pos];
                 break;
             }
@@ -92,30 +93,27 @@ void primera_etapa(char *original, char *codificado, int clave) {
 }
 
 void segunda_etapa(char *precodificado, char *codificado, int clave) {
-    char alfabeto[47];
-    int tam_alfabeto, i, j;
+    char alfabeto[48], aux[100];
+    int tamano_alfabeto, i, j;
     inicializa_alfabeto(alfabeto);
-    tam_alfabeto = strlen(alfabeto);
+    tamano_alfabeto = strlen(alfabeto);
     i = 0;
     while (precodificado[i] != '\0') {
-        for(j = 0; j < tam_alfabeto; j++) {
+        for(j = 0; j < tamano_alfabeto; j++) {
             if ((precodificado[i] == alfabeto[j]) && (j % 2 == 0 || j == 0)) {
-                int pos = posicion_caracter(j, clave, tam_alfabeto);
+                int pos = posicion_caracter(j, clave, tamano_alfabeto);
                 codificado[i] = alfabeto[pos];
                 break;
             } 
         }
         i++;
     }
+    snprintf(aux, sizeof(aux), "%d#%s", clave, codificado);
+    strcpy(codificado, aux);
 }
 
 void codificar(char *original, char *codificado, char *alfabeto, int clave) {
-    int tam_original, i;
-    tam_original = strlen(original);
-    for(i = 0; i < tam_original; i++) {
-        codificado[i] = '\0';
-    }
-    i = 0;
+    inicializar_arreglo(codificado, strlen(codificado));
     primera_etapa(original, codificado, clave);
     segunda_etapa(codificado, codificado, clave);
 }
