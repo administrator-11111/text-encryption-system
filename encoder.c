@@ -20,12 +20,14 @@ int main(){
     graba_mensaje(codificado);
     return 0;
 }
+
 void inicializar_arreglo(char *arreglo, int tam) {
     int i;
     for (i = 0; i < tam; i++) {
         arreglo[i] = '\0';
     }
 }
+
 void lee_original(char *original, int *clave) {
     FILE *archivo;
     char datos[100];
