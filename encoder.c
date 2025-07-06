@@ -36,18 +36,16 @@ void lee_original(char *original, int *clave) {
     if (archivo != NULL) {
         fgets(datos, ORIGINAL, archivo);
         
-        while (!feof(archivo)) {
-            // Aquí se obtiene el número
-            while(datos[i] >= '0' && datos[i] <= '9') {
-                *clave = (*clave * 10) + (datos[i] - '0');
-                i++;
-            }
-            if (datos[i] == '#') i++;
-            while (datos[i] != '\0') {
-                original[j] = datos[i];
-                i++;
-                j++;
-            }
+        // Aquí se obtiene el número
+        while(datos[i] >= '0' && datos[i] <= '9') {
+            *clave = (*clave * 10) + (datos[i] - '0');
+            i++;
+        }
+        if (datos[i] == '#') i++;
+        while (datos[i] != '\0') {
+            original[j] = datos[i];
+            i++;
+            j++;
         }
     }
     fclose(archivo);
@@ -70,8 +68,8 @@ void inicializa_alfabeto(char *alfabeto) {
 }
 
 void codificar(char *, char *, char *, int) {
-    return 0;
+
 }
+
 void graba_mensaje(char *) {
-    return 0;
 }
