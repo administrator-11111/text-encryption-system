@@ -29,15 +29,11 @@ void inicializar_arreglo(char *arreglo, int tam) {
 void lee_original(char *original, int *clave) {
     FILE *archivo;
     char datos[100];
-    int tam_original, i, j;
+    int i, j;
     archivo = fopen("original.txt", "r");
+    i = 0;
     j = 0;
     *clave = 0;
-    inicializar_arreglo(datos, 100);
-    inicializar_arreglo(original, 100);
-    tam_original = strlen(original);
-    
-    i = 0;
     if (archivo != NULL) {
         fgets(datos, sizeof(datos), archivo);
         while (datos[i] >= '0' && datos[i] <= '9') {
@@ -50,8 +46,9 @@ void lee_original(char *original, int *clave) {
             i++;
             j++;
         }
+        original[j] = '\0';
+        fclose(archivo);
     }
-    fclose(archivo);
 }
 
 void inicializa_alfabeto(char *alfabeto) {
@@ -61,19 +58,17 @@ void inicializa_alfabeto(char *alfabeto) {
         'Y', 'Z', ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8',
         '9', '!', ',', '.', ':', ';', '?', '-', '+', '*', '/', '\0'}; 
     int i;
-    for (i = 0; i < sizeof(pre_alfabeto); i++) {
+    for (i = 0; i < 48; i++) {
         alfabeto[i] = pre_alfabeto[i]; 
     }
 }
 
 int posicion_caracter(int posicion, int clave, int tam) {
     int nueva_posicion;
-    nueva_posicion = posicion - clave;
-    if (nueva_posicion < 0) {
-        nueva_posicion += tam;
-    }
+    nueva_posicion = (posicion - (clave % tam) + tam) % tam;
     return nueva_posicion;
 }
+
 void primera_etapa(char *original, char *codificado, int clave) {
     char alfabeto[48];
     int tamano_alfabeto, i, j;
@@ -123,6 +118,6 @@ void graba_mensaje(char *mensaje) {
     archivo = fopen("codificado.txt", "w");
     if (archivo != NULL) {
         fprintf(archivo, "%s", mensaje);
+        fclose(archivo);
     }
-    fclose(archivo);
 }
