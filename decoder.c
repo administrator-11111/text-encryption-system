@@ -5,6 +5,7 @@ void inicializar_arreglo(char *, int);
 void lee_original(char *, int *);
 void inicializa_alfabeto(char *);
 int posicion_caracter(int, int, int);
+int verificar_multiplo(char, int);
 void decodificar(char *, char *, char *, int);
 void graba_mensaje(char *);
 void primera_etapa(char *, char *, int);
@@ -17,6 +18,7 @@ int main(){
     char codificado[100];
     int N;
     lee_original(original, &N);
+    printf("%d#%s\n", N, original);
     inicializa_alfabeto(alfabeto);
     decodificar(original, codificado, alfabeto, N);
     graba_mensaje(codificado);
@@ -86,10 +88,11 @@ void primera_etapa(char *original, char *codificado, int clave) {
     while (original[i] != '\0') {
         for(j = 0; j < tamano_alfabeto; j++) {
             if ((original[i] == alfabeto[j])) {
-                int pos = posicion_caracter(j, clave, tamano_alfabeto);
-                
-                if (j % 2 == 0 || j == 0) {
-                    codificado[i] = alfabeto[pos];
+                if (verificar_multiplo(original[i], clave) == 1) {
+                    int pos = posicion_caracter(j, clave, tamano_alfabeto);
+                    if (j % 2 == 0 || j == 0) {
+                        codificado[i] = alfabeto[pos];
+                    }
                 } else {
                     codificado[i] = original[i];
                 }
@@ -111,7 +114,6 @@ void segunda_etapa(char *precodificado, char *decodificado, int clave) {
             if (precodificado[i] == alfabeto[j]) {
                 int pos = posicion_caracter(j, clave, tamano_alfabeto);
                 resultado[i] = alfabeto[pos];
-                break;
             }
         }
         i++;
@@ -122,7 +124,9 @@ void segunda_etapa(char *precodificado, char *decodificado, int clave) {
 
 void decodificar(char *original, char *codificado, char *alfabeto, int clave) {
     primera_etapa(original, codificado, clave);
+    printf("1. original: %s, codificado: %s\n", original, codificado);
     segunda_etapa(codificado, codificado, clave);
+    printf("2. original: %s, codificado: %s\n", original, codificado);
 }
 
 void graba_mensaje(char *mensaje) {
@@ -132,4 +136,23 @@ void graba_mensaje(char *mensaje) {
         fprintf(archivo, "%s", mensaje);
         fclose(archivo);
     }
+}
+
+int verificar_multiplo(char mensaje, int clave) {
+    char alfabeto[48];
+    int tamano_alfabeto = 47, retorno, i, j;
+    inicializa_alfabeto(alfabeto);
+    retorno = 0;
+    i = 0;
+    for (j = 0; j < tamano_alfabeto; j++) {
+        if (mensaje == alfabeto[j] && (j % 2 != 0)) {
+            int pos = posicion_caracter(j, clave, tamano_alfabeto);
+            //mensaje = alfabeto[pos];
+            if (pos % 2 == 0 || pos == 0) {
+                retorno = 1;
+            }
+            printf("%c[%d] -> %c[%d] = %d\n", alfabeto[j], j, alfabeto[pos], pos, retorno);
+        }
+    }
+    return retorno;
 }
