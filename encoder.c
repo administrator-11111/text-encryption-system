@@ -3,9 +3,6 @@
 
 void lee_original(char *, int *);
 void inicializa_alfabeto(char *);
-int posicion_caracter(int, int, int);
-void primera_etapa(char *, char *, int);
-void segunda_etapa(char *, char *, int);
 void codificar(char *, char *, char *, int);
 void graba_mensaje(char *);
 
@@ -75,7 +72,10 @@ void primera_etapa(char *original, char *codificado, int clave) {
     char alfabeto[48];
     int tamano_alfabeto, i, j;
     inicializa_alfabeto(alfabeto);
-    tamano_alfabeto = strlen(alfabeto);
+    tamano_alfabeto = 47;
+    for (i = 0; i < 100; i++) {
+        codificado[i] = original[i];
+    }
     i = 0;
     while (original[i] != '\0') {
         for (j = 0; j < tamano_alfabeto; j++) {
@@ -93,7 +93,7 @@ void segunda_etapa(char *precodificado, char *codificado, int clave) {
     char alfabeto[48], aux[100];
     int tamano_alfabeto, i, j;
     inicializa_alfabeto(alfabeto);
-    tamano_alfabeto = strlen(alfabeto);
+    tamano_alfabeto = 47;
     i = 0;
     while (precodificado[i] != '\0') {
         for(j = 0; j < tamano_alfabeto; j++) {
@@ -110,9 +110,10 @@ void segunda_etapa(char *precodificado, char *codificado, int clave) {
 }
 
 void codificar(char *original, char *codificado, char *alfabeto, int clave) {
-    inicializar_arreglo(codificado, strlen(codificado));
     primera_etapa(original, codificado, clave);
+    printf("Etapa1: %s", codificado);
     segunda_etapa(codificado, codificado, clave);
+    printf("Etapa2: %s", codificado);
 }
 
 void graba_mensaje(char *mensaje) {
